@@ -1,0 +1,27 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Employee {
+  id         String   @id // Maps to the PDF 'ID' column
+  name       String
+  department String
+  records    TimeRecord[]
+}
+
+model TimeRecord {
+  id         String   @id @default(uuid())
+  employeeId String
+  employee   Employee @relation(fields: [employeeId], references: [id])
+  date       DateTime // We'll store this as a DateTime for easier sorting
+  clockIn    String   // e.g., "10:48", or "--"
+  clockOut   String   // e.g., "18:44", or "--"
+  weekday    String
+
+  @@unique([employeeId, date]) // Ensures deduplication
+}
