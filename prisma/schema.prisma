@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = "file:./dev.db"
+  url      = env("DATABASE_URL")
 }
 
 model Employee {
@@ -24,4 +24,15 @@ model TimeRecord {
   weekday    String
 
   @@unique([employeeId, date]) // Ensures deduplication
+}
+
+model OfficeHours {
+  id             String   @id @default(cuid())
+  departmentName String   @default("ALL") // To allow specific times for DEV vs SUP
+  startDate      DateTime 
+  endDate        DateTime
+  expectedIn     String   // e.g "10:00"
+  expectedOut    String   // e.g "18:00"
+  
+  @@unique([departmentName, startDate, endDate])
 }
